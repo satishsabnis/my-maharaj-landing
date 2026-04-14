@@ -100,7 +100,7 @@
       <div class="card"><div class="section-title">Subscription Tiers</div><div id="tier-chart" style="margin-top:12px"></div></div>
     </div>
     <div class="section"><div class="section-title">Recent Users (latest 20)</div>
-      <table><thead><tr><th>User ID</th><th>Community</th><th>Subscription</th><th>Expires</th><th>Joined</th></tr></thead>
+      <table><thead><tr><th>User ID</th><th>Name</th><th>Community</th><th>Subscription</th><th>Expires</th><th>Joined</th></tr></thead>
       <tbody id="users-tbody"></tbody></table>
     </div>
     <div class="two-col section">
@@ -175,7 +175,7 @@ async function loadDashboard() {
     // Profiles
     const { data: profiles, error: profErr } = await db
       .from('profiles')
-      .select('id, community, cuisines, subscription_tier, subscription_expires_at, created_at')
+      .select('id, community, subscription_tier, subscription_expires_at, created_at, full_name, cooking_pattern, jain_family')
       .order('created_at', { ascending: false })
       .limit(200);
 
