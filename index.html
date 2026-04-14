@@ -307,7 +307,8 @@
   </p>
 
   <div class="hero-actions reveal" style="transition-delay:.25s">
-    <a href="#waitlist" class="btn-primary">Get Early Access</a>
+    <a href="https://app.my-maharaj.com" target="_blank" class="btn-primary" style="background:var(--bfc-green);box-shadow:0 4px 20px rgba(0,191,0,0.3)">Open My Maharaj</a>
+    <a href="#waitlist" class="btn-outline">Join the waitlist</a>
     <a href="#how" class="btn-outline">See how it works</a>
   </div>
 
@@ -429,6 +430,14 @@
     Join the waitlist. Be among the first Indian families in the GCC to plan their week with My Maharaj. Launching May 2026.
   </p>
 
+  <!-- App CTA -->
+  <div class="reveal" style="transition-delay:.18s;margin-bottom:16px">
+    <a href="https://app.my-maharaj.com" target="_blank" style="display:inline-block;background:var(--bfc-green);color:#fff;font-family:var(--f);font-size:15px;font-weight:700;padding:16px 40px;border-radius:12px;text-decoration:none;box-shadow:0 4px 20px rgba(0,191,0,0.3)">
+      Open My Maharaj — Live Now
+    </a>
+    <div style="font-size:11px;font-weight:400;color:rgba(19,50,87,0.5);margin-top:8px">app.my-maharaj.com &nbsp;&middot;&nbsp; No download needed</div>
+  </div>
+
   <!-- Form — centred, max-width -->
   <div class="reveal" style="transition-delay:.2s;width:100%;max-width:480px">
     <div style="background:rgba(255,255,255,0.92);border-radius:18px;padding:36px 32px;box-shadow:0 16px 56px rgba(19,50,87,0.12);border:1px solid rgba(201,162,39,0.2)">
@@ -480,16 +489,16 @@
     <div class="footer-inner">
       <div class="ft-brand">
         
-        <div class="ft-brand-sub">Blue Flute Consulting LLC-FZ<br>United Arab Emirates<br>my-maharaj@bluefluteconsulting.com</div>
+        <div class="ft-brand-sub">Blue Flute Consulting LLC-FZ<br>United Arab Emirates<br><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e18c98cc8c80898093808ba1838d9484878d949584828e8f92948d95888f86cf828e8c">[email&#160;protected]</a></div>
       </div>
       <div class="ft-col"><div class="ft-col-hdr">Product</div><a href="#how">How it works</a><a href="#community">Communities</a><a href="#features">Features</a><a href="#chefs">For Chefs</a></div>
-      <div class="ft-col"><div class="ft-col-hdr">Company</div><a href="https://www.bluefluteconsulting.com" target="_blank">Blue Flute Consulting</a><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="mailto:my-maharaj@bluefluteconsulting.com">Contact Us</a></div>
+      <div class="ft-col"><div class="ft-col-hdr">Company</div><a href="https://www.bluefluteconsulting.com" target="_blank">Blue Flute Consulting</a><a href="#">Privacy Policy</a><a href="#">Terms of Use</a><a href="/cdn-cgi/l/email-protection#e38e9ace8e828b82918289a3818f9686858f969786808c8d90968f978a8d84cd808c8e">Contact Us</a></div>
     </div>
     <div class="ft-bottom">&copy; 2026 My Maharaj &middot; Blue Flute Consulting LLC-FZ &middot; All rights reserved</div>
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js" defer></script><script>
   const io=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting){x.target.classList.add('visible');io.unobserve(x.target);}});},{threshold:0.1});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
 
@@ -498,8 +507,4 @@
   document.getElementById('ticker').innerHTML=doubled.map((d,i)=>`<div class="t-pill${i%6===0?' ft':''}">${d}</div>`).join('');
   function handleSubmit(e){e.preventDefault();e.target.querySelectorAll('input,select,button').forEach(el=>el.disabled=true);document.getElementById('form-success').style.display='block';}
   const secs=document.querySelectorAll('section[id]');
-  const navAs=document.querySelectorAll('.nav-links a:not(.nav-cta)');
-  window.addEventListener('scroll',()=>{let cur='';secs.forEach(s=>{if(window.scrollY>=s.offsetTop-90)cur=s.id;});navAs.forEach(a=>{a.style.color=a.getAttribute('href')===`#${cur}`?'var(--bfc-green)':'rgba(19,50,87,0.65)';});},{passive:true});
-</script>
-</body>
-</html>
+  const navAs=document.querySele
