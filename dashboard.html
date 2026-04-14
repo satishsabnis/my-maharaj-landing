@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Maharaj Analytics</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{
+      --navy:#1B3A5C;--navy-d:#0D2A45;--teal:#1A6B5C;--teal-l:#7ED8A4;
+      --gold:#C9A227;--green:#00BF00;--cream:#F8F5EF;--white:#fff;--muted:#5A7A8A;
+      --border:rgba(27,58,92,0.12);--f:'Poppins',sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--f);background:#f0f4f8;color:var(--navy);-webkit-font-smoothing:antialiased}
+    header{background:var(--navy-d);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(201,162,39,0.3)}
+    .hdr-brand{font-size:18px;font-weight:700;color:#fff}.hdr-brand span{color:var(--gold)}
+    .hdr-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px}
+    .hdr-right{font-size:11px;color:rgba(255,255,255,0.35)}#last-updated{color:var(--gold)}
+    .tabs{display:flex;background:var(--navy);padding:0 40px;border-bottom:2px solid var(--gold)}
+    .tab{padding:14px 28px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.55);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s}
+    .tab:hover{color:rgba(255,255,255,0.85)}
+    .tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:600}
+    .tab-content{display:none;padding:32px 40px;max-width:1300px;margin:0 auto}
+    .tab-content.active{display:block}
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:28px}
+    .stat-card{background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(27,58,92,0.06)}
+    .stat-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+    .stat-value{font-size:36px;font-weight:800;color:var(--navy);line-height:1}
+    .stat-sub{font-size:12px;font-weight:300;color:var(--muted);margin-top:6px}
+    .card{background:var(--white);border-radius:12px;padding:24px;border:1px solid var(--border);box-shadow:0 2px 12px rgba(27,58,92,0.06)}
+    .section{margin-bottom:24px}
+    .section-title{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .section-title::before{content:'';display:block;width:3px;height:14px;background:var(--gold);border-radius:2px}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .bar-chart{display:flex;align-items:flex-end;gap:8px;height:100px;margin-top:12px}
+    .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+    .bar{width:100%;border-radius:4px 4px 0 0;min-height:2px}
+    .bar-label{font-size:9px;color:var(--muted);text-align:center}
+    .bar-val{font-size:9px;font-weight:600;color:var(--navy)}
+    table{width:100%;border-collapse:collapse;background:var(--white);border-radius:12px;overflow:hidden;border:1px solid var(--border);box-shadow:0 2px 12px rgba(27,58,92,0.06)}
+    th{background:var(--navy);color:rgba(255,255,255,0.7);font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;padding:11px 14px;text-align:left}
+    td{padding:11px 14px;font-size:12px;border-bottom:1px solid var(--border);color:var(--navy)}
+    tr:last-child td{border-bottom:none}tr:hover td{background:#f8fafc}
+    .badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:600}
+    .badge.free{background:rgba(26,107,92,0.1);color:var(--teal)}
+    .badge.pro{background:rgba(201,162,39,0.15);color:var(--gold)}
+    .progress-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+    .progress-label{width:90px;font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .progress-bar{flex:1;height:8px;background:#f0f4f8;border-radius:4px;overflow:hidden}
+    .progress-fill{height:100%;border-radius:4px}
+    .progress-val{width:24px;text-align:right;font-size:11px;font-weight:600;color:var(--navy)}
+    .loading{text-align:center;padding:48px;color:var(--muted);font-size:13px}
+    .spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--navy);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .error{text-align:center;padding:32px;color:#dc2626;font-size:13px}
+    .mp-event-card{background:var(--white);border-radius:11px;padding:18px;border:1px solid var(--border);border-left:3px solid var(--gold)}
+    .mp-event-name{font-size:12px;font-weight:600;color:var(--navy);margin-bottom:3px}
+    .mp-event-desc{font-size:11px;font-weight:300;color:var(--muted);line-height:1.5}
+    .funnel-step{display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--border)}
+    .funnel-step:last-child{border-bottom:none}
+    .funnel-num{font-size:10px;font-weight:700;color:var(--muted);width:18px}
+    .funnel-name{flex:1;font-size:13px;font-weight:500;color:var(--navy)}
+    .funnel-event{font-size:10px;font-weight:400;color:var(--muted);font-family:monospace}
+    .funnel-bar-wrap{width:160px;height:7px;background:#f0f4f8;border-radius:3px;overflow:hidden}
+    .funnel-bar{height:100%;background:var(--teal);border-radius:3px}
+    .mp-link{display:inline-block;background:var(--navy);color:#fff;font-size:13px;font-weight:600;padding:10px 22px;border-radius:8px;text-decoration:none}
+    .mp-link:hover{background:var(--teal)}
+    @media(max-width:900px){
+      .stats-grid,.two-col,.three-col{grid-template-columns:1fr 1fr}
+      header,.tabs,.tab-content{padding-left:20px;padding-right:20px}
+    }
+    @media(max-width:600px){.stats-grid{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="hdr-brand">My <span>Maharaj</span> Analytics</div>
+    <div class="hdr-sub">Internal dashboard &nbsp;&middot;&nbsp; Blue Flute Consulting LLC-FZ</div>
+  </div>
+  <div class="hdr-right">Last updated: <span id="last-updated">—</span></div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('biz')">Business Metrics</div>
+  <div class="tab" onclick="switchTab('mp')">Mixpanel Events</div>
+</div>
+
+<!-- TAB 1: BUSINESS METRICS -->
+<div id="tab-biz" class="tab-content active">
+  <div id="biz-loading" class="loading"><div class="spinner"></div>Loading from Supabase...</div>
+  <div id="biz-data" style="display:none">
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="two-col section">
+      <div class="card"><div class="section-title">Signups — Last 7 Days</div><div class="bar-chart" id="signup-chart"></div></div>
+      <div class="card"><div class="section-title">Subscription Tiers</div><div id="tier-chart" style="margin-top:12px"></div></div>
+    </div>
+    <div class="section"><div class="section-title">Recent Users (latest 20)</div>
+      <table><thead><tr><th>User ID</th><th>Community</th><th>Subscription</th><th>Expires</th><th>Joined</th></tr></thead>
+      <tbody id="users-tbody"></tbody></table>
+    </div>
+    <div class="two-col section">
+      <div class="card"><div class="section-title">Communities</div><div id="community-chart" style="margin-top:10px"></div></div>
+      <div class="card"><div class="section-title">Progress Trackers</div><div id="progress-charts" style="margin-top:10px"></div></div>
+    </div>
+  </div>
+  <div id="biz-error" class="error" style="display:none"></div>
+</div>
+
+<!-- TAB 2: MIXPANEL -->
+<div id="tab-mp" class="tab-content">
+  <div style="background:var(--white);border-radius:14px;padding:24px;border:1px solid var(--border);margin-bottom:24px;display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:17px;font-weight:700;color:var(--navy)">Mixpanel Event Analytics</div>
+      <div style="font-size:12px;font-weight:300;color:var(--muted);margin-top:3px">Native app events &nbsp;&middot;&nbsp; Project: My Maharaj &nbsp;&middot;&nbsp; Token: 79c6ffac...</div>
+    </div>
+    <a href="https://mixpanel.com/report" target="_blank" class="mp-link">Open Mixpanel</a>
+  </div>
+  <div class="section"><div class="section-title">Events Tracked in App</div>
+    <div class="three-col">
+      <div class="mp-event-card"><div class="mp-event-name">user_registered</div><div class="mp-event-desc">Fired on signup. Identifies user with email in Mixpanel People.</div></div>
+      <div class="mp-event-card"><div class="mp-event-name">onboarding_completed</div><div class="mp-event-desc">Fired when onboarding is done. Includes cuisine, food preference, community.</div></div>
+      <div class="mp-event-card"><div class="mp-event-name">plan_generated</div><div class="mp-event-desc">Fired every time a meal plan is generated. Includes number of days.</div></div>
+      <div class="mp-event-card"><div class="mp-event-name">dish_feedback_given</div><div class="mp-event-desc">Fired when user rates a dish. Includes dish name and rating.</div></div>
+      <div class="mp-event-card"><div class="mp-event-name">cook_export_sent</div><div class="mp-event-desc">Fired when meal plan is shared with cook via WhatsApp.</div></div>
+      <div class="mp-event-card"><div class="mp-event-name">upgrade_shown</div><div class="mp-event-desc">Fired when paywall appears after subscription expires.</div></div>
+      <div class="mp-event-card"><div class="mp-event-name">family_recipe_imported</div><div class="mp-event-desc">Fired when user imports a family recipe via PDF or image.</div></div>
+      <div class="mp-event-card"><div class="mp-event-name">referral_shared</div><div class="mp-event-desc">Fired when user shares the app via referral link.</div></div>
+      <div class="mp-event-card"><div class="mp-event-name">push_notification_tapped</div><div class="mp-event-desc">Fired when user taps a push notification to open the app.</div></div>
+    </div>
+  </div>
+  <div class="two-col section">
+    <div class="card"><div class="section-title">User Journey Funnel</div>
+      <div class="funnel-step"><div class="funnel-num">1</div><div><div class="funnel-name">App opened</div><div class="funnel-event">Session start</div></div><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:100%"></div></div></div>
+      <div class="funnel-step"><div class="funnel-num">2</div><div><div class="funnel-name">Registered</div><div class="funnel-event">user_registered</div></div><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:75%"></div></div></div>
+      <div class="funnel-step"><div class="funnel-num">3</div><div><div class="funnel-name">Onboarding done</div><div class="funnel-event">onboarding_completed</div></div><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:60%"></div></div></div>
+      <div class="funnel-step"><div class="funnel-num">4</div><div><div class="funnel-name">First plan generated</div><div class="funnel-event">plan_generated</div></div><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:45%"></div></div></div>
+      <div class="funnel-step"><div class="funnel-num">5</div><div><div class="funnel-name">Dish feedback given</div><div class="funnel-event">dish_feedback_given</div></div><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:20%"></div></div></div>
+      <div class="funnel-step"><div class="funnel-num">6</div><div><div class="funnel-name">Cook notified</div><div class="funnel-event">cook_export_sent</div></div><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:15%"></div></div></div>
+    </div>
+    <div class="card"><div class="section-title">How to view live events</div>
+      <div style="font-size:13px;font-weight:300;color:var(--muted);line-height:1.8;margin-top:4px">
+        <p style="margin-bottom:10px">Mixpanel only tracks events on the <strong style="color:var(--navy)">native app</strong> (iOS/Android). Web version is excluded by design.</p>
+        <p style="margin-bottom:10px">To see live data:</p>
+        <ol style="padding-left:18px;margin-bottom:10px">
+          <li style="margin-bottom:5px">Click <strong>Open Mixpanel</strong> above</li>
+          <li style="margin-bottom:5px">Go to <strong>Live View</strong> in the sidebar</li>
+          <li style="margin-bottom:5px">Open the native app on a device</li>
+          <li style="margin-bottom:5px">Events appear in real time</li>
+        </ol>
+        <p>For historical charts go to <strong>Insights</strong> and select any event name from the list above.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://ljgfvoyloeelnmugysrk.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxqZ2Z2b3lsb2VlbG5tdWd5c3JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTEyMjgsImV4cCI6MjA4OTU2NzIyOH0.AXBGCzbaDlFLkjM7wcCNWNLGi9bDG054jqqOTkqsXio';
+
+// Use the Supabase JS client (loaded via CDN) to avoid CORS issues
+const { createClient } = supabase;
+const db = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function loadDashboard() {
+  document.getElementById('biz-loading').style.display = 'block';
+  document.getElementById('biz-data').style.display = 'none';
+  document.getElementById('biz-error').style.display = 'none';
+
+  try {
+    // Profiles
+    const { data: profiles, error: profErr } = await db
+      .from('profiles')
+      .select('id, community, cuisines, subscription_tier, subscription_expires_at, created_at')
+      .order('created_at', { ascending: false })
+      .limit(200);
+
+    if (profErr) throw new Error('Profiles: ' + profErr.message);
+
+    // Dish count
+    const { count: dishCount, error: dishErr } = await db
+      .from('dishes')
+      .select('id', { count: 'exact', head: true });
+
+    const now = new Date();
+    const last7 = new Date(now - 7*864e5);
+    const last30 = new Date(now - 30*864e5);
+    const newLast7 = profiles.filter(p => new Date(p.created_at) > last7).length;
+    const newLast30 = profiles.filter(p => new Date(p.created_at) > last30).length;
+    const proUsers = profiles.filter(p => p.subscription_tier && p.subscription_tier !== 'Free').length;
+    const total = profiles.length;
+
+    // Stats cards
+    document.getElementById('stats-grid').innerHTML = `
+      <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value" style="color:var(--navy)">${total}</div><div class="stat-sub">All registered</div></div>
+      <div class="stat-card"><div class="stat-label">New This Week</div><div class="stat-value" style="color:var(--teal)">${newLast7}</div><div class="stat-sub">${newLast30} in 30 days</div></div>
+      <div class="stat-card"><div class="stat-label">Dish Database</div><div class="stat-value" style="color:var(--gold)">${(dishCount||0).toLocaleString()}</div><div class="stat-sub">Unique dishes</div></div>
+      <div class="stat-card"><div class="stat-label">700 Target</div><div class="stat-value" style="color:var(--navy)">${total}<span style="font-size:16px;font-weight:400;color:var(--muted)">/700</span></div><div class="stat-sub">${(total/700*100).toFixed(1)}% achieved</div></div>
+    `;
+
+    // Signup chart
+    const days = [];
+    for(let i=6;i>=0;i--){
+      const d = new Date(now - i*864e5);
+      const label = d.toLocaleDateString('en-GB',{weekday:'short'});
+      const count = profiles.filter(p => new Date(p.created_at).toDateString()===d.toDateString()).length;
+      days.push({label,count});
+    }
+    const maxC = Math.max(...days.map(d=>d.count),1);
+    document.getElementById('signup-chart').innerHTML = days.map(d=>`
+      <div class="bar-col">
+        <div class="bar-val">${d.count}</div>
+        <div class="bar" style="height:${Math.max(d.count/maxC*85,2)}px;background:${d.count>0?'var(--navy)':'#e2e8f0'}"></div>
+        <div class="bar-label">${d.label}</div>
+      </div>`).join('');
+
+    // Tier chart
+    const tiers = {};
+    profiles.forEach(p=>{ const t=p.subscription_tier||'Free'; tiers[t]=(tiers[t]||0)+1; });
+    document.getElementById('tier-chart').innerHTML = Object.entries(tiers).map(([t,c])=>`
+      <div class="progress-row">
+        <div class="progress-label">${t}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${(c/total*100).toFixed(0)}%;background:var(--teal)"></div></div>
+        <div class="progress-val">${c}</div>
+      </div>`).join('');
+
+    // Users table
+    document.getElementById('users-tbody').innerHTML = profiles.slice(0,20).map(p=>{
+      const expiry = p.subscription_expires_at ? new Date(p.subscription_expires_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—';
+      const joined = new Date(p.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'});
+      const tier = p.subscription_tier||'Free';
+      return `<tr>
+        <td style="font-size:10px;color:var(--muted);font-family:monospace">${p.id.substring(0,12)}...</td>
+        <td>${p.community||'—'}</td>
+        <td><span class="badge ${tier==='Free'?'free':'pro'}">${tier}</span></td>
+        <td>${expiry}</td>
+        <td>${joined}</td>
+      </tr>`;
+    }).join('');
+
+    // Community chart
+    const comms={};
+    profiles.forEach(p=>{ const c=p.community||'Not set'; comms[c]=(comms[c]||0)+1; });
+    const sortedC=Object.entries(comms).sort((a,b)=>b[1]-a[1]).slice(0,8);
+    const maxCo=Math.max(...sortedC.map(c=>c[1]),1);
+    document.getElementById('community-chart').innerHTML = sortedC.map(([c,n])=>`
+      <div class="progress-row">
+        <div class="progress-label" title="${c}">${c}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${(n/maxCo*100).toFixed(0)}%;background:var(--navy)"></div></div>
+        <div class="progress-val">${n}</div>
+      </div>`).join('');
+
+    // Progress
+    document.getElementById('progress-charts').innerHTML = `
+      <div style="margin-bottom:18px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:12px;color:var(--muted)">Users toward 700</span>
+          <span style="font-size:12px;font-weight:700;color:var(--navy)">${total}/700</span>
+        </div>
+        <div class="progress-bar" style="height:12px"><div class="progress-fill" style="width:${Math.min(total/700*100,100).toFixed(1)}%;background:var(--gold)"></div></div>
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:12px;color:var(--muted)">Dishes toward 100,000</span>
+          <span style="font-size:12px;font-weight:700;color:var(--navy)">${(dishCount||0).toLocaleString()}/100k</span>
+        </div>
+        <div class="progress-bar" style="height:12px"><div class="progress-fill" style="width:${Math.min((dishCount||0)/100000*100,100).toFixed(2)}%;background:var(--teal)"></div></div>
+      </div>
+    `;
+
+    document.getElementById('last-updated').textContent = new Date().toLocaleTimeString('en-GB');
+    document.getElementById('biz-loading').style.display='none';
+    document.getElementById('biz-data').style.display='block';
+
+  } catch(err) {
+    document.getElementById('biz-loading').style.display='none';
+    document.getElementById('biz-error').style.display='block';
+    document.getElementById('biz-error').innerHTML = `Error: ${err.message}<br><br><button onclick="loadDashboard()" style="background:var(--gold);border:none;padding:8px 20px;border-radius:8px;font-weight:600;cursor:pointer;font-family:var(--f)">Retry</button>`;
+  }
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+  document.getElementById(`tab-${tab}`).classList.add('active');
+}
+
+loadDashboard();
+setInterval(loadDashboard, 5*60*1000);
+</script>
+</body>
+</html>
