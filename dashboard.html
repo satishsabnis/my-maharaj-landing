@@ -307,21 +307,25 @@
 
 <script>
 const SUPABASE_URL = 'https://ljgfvoyloeelnmugysrk.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxqZ2Z2b3lsb2VlbG5tdWd5c3JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTEyMjgsImV4cCI6MjA4OTU2NzIyOH0.AXBGCzbaDlFLkjM7wcCNWNLGi9bDG054jqqOTkqsXio';
+const SUPABASE_KEY = 'sb_publishable_2j2dHIQP2DOTJFy9E_fmZw_y4Q4e_L4';
 
 async function query(table, select='*', filters={}) {
-  let url = `$https://ljgfvoyloeelnmugysrk.supabase.co/rest/v1/${table}?select=${encodeURIComponent(select)}`;
-  Object.entries(filters).forEach(([k,v]) => url += `&${k}=${encodeURIComponent(v)}`);
+  let url = `${SUPABASE_URL}/rest/v1/${table}?select=${encodeURIComponent(select)}`;
+  Object.entries(filters).forEach(([k,v]) => url += `&${k}=${v}`);
   const res = await fetch(url, {
     headers: {
       'apikey': SUPABASE_KEY,
-      'Authorization': `Bearer $eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxqZ2Z2b3lsb2VlbG5tdWd5c3JrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5OTEyMjgsImV4cCI6MjA4OTU2NzIyOH0.AXBGCzbaDlFLkjM7wcCNWNLGi9bDG054jqqOTkqsXio`,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
       'Content-Type': 'application/json',
       'Prefer': 'count=exact'
     }
   });
   const count = parseInt(res.headers.get('content-range')?.split('/')[1] ?? '0');
   const data = await res.json();
+  if (!res.ok || !Array.isArray(data)) {
+    console.error('Supabase error on table ' + table + ':', data);
+    return { data: [], count: 0 };
+  }
   return { data, count };
 }
 
@@ -331,7 +335,7 @@ async function loadDashboard() {
     const { data: profiles, count: totalUsers } = await query(
       'profiles',
       'id,community,cuisines,subscription_tier,subscription_expires_at,created_at',
-      { 'order': 'created_at.desc', 'limit': '100' }
+      { order: 'created_at.desc', limit: 100 }
     );
 
     // Fetch auth users for emails
